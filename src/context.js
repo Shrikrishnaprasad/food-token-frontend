@@ -10,7 +10,7 @@ const AppProvider = ({ children }) => {
     isChef: false,
   };
   const [user, setUser] = useState(userInitialState);
-  const [foods, setFoods] = useState([]);
+  //const [foods, setFoods] = useState([]);
   const value = {
     userInitialState,
     user,

@@ -20,7 +20,7 @@ import { useGlobalContext } from "context";
 
 export default function Login() {
   const history = useHistory();
-  const { setUser } = useGlobalContext();
+  //const { setUser } = useGlobalContext();
   const [type, setType] = useState("User");
   const initialState = {
     email: "",

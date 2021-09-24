@@ -95,7 +95,7 @@ export default function DefaultNavbar() {
               )}
 
               {user.username && (
-                <Link to="/profile/123">
+                <Link to="/">
                   <Button
                     color="transparent"
                     className="bg-gray-50 text-black ml-4"
