@@ -9,11 +9,24 @@ import { useEffect } from "react";
 import { useGlobalContext } from "context";
 import Image from "@material-tailwind/react/Image";
 
-export default function ModalPopUp({ amount }) {
-  const { user } = useGlobalContext();
+export default function ModalPopUp({ amount, food }) {
+  const { URL, user } = useGlobalContext();
 
   const [showModal, setShowModal] = useState(false);
-
+  const [token, setToken] = useState("");
+  function genToken() {
+    let rndResult = "";
+    let characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789";
+    let charLen = characters.length;
+    for (let i = 0; i < 7; i++) {
+      rndResult += characters.charAt(Math.floor(Math.random() * charLen));
+    }
+    return rndResult;
+  }
+  let headersList = {
+    "Content-Type": "application/json",
+  };
   const options = {
     key: "rzp_test_YkCd4OxHtBFQbV", // api-key
     amount: amount * 100, //  = INR 1 = 100 (so * 100)
@@ -25,14 +38,34 @@ export default function ModalPopUp({ amount }) {
       console.log(response);
       alert("Payment successfully done");
       setShowModal(true);
+      const tkn = genToken() + response.razorpay_payment_id;
+      setToken(tkn);
+      fetch(`${URL}/token/addToken`, {
+        method: "POST",
+        body: JSON.stringify({
+          token: tkn,
+          userId: user.id,
+          paymentId: response.razorpay_payment_id,
+          foodName: food.foodName,
+          imgUrl: food.imgUrl,
+          price: food.price,
+          minutes: food.minutes,
+        }),
+        headers: headersList,
+      })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {})
+        .catch((err) => console.log(err));
     },
     prefill: {
-      name: "",
-      contact: "",
-      email: "",
+      name: user.username,
+      contact: user.mobile,
+      email: user.email,
     },
     notes: {
-      address: "some address",
+      address: "",
     },
     theme: {
       color: "blue",
@@ -84,7 +117,10 @@ export default function ModalPopUp({ amount }) {
           <br />
           <p className="text-base  leading-relaxed text-gray-600 flex">
             Token :{" "}
-            <span className="font-bold mx-4 text-lg"> hbgvftr5678uijhgvf </span>{" "}
+            <span className="font-bold mx-4 text-lg">
+              {" "}
+              {token || "Loading..."}{" "}
+            </span>{" "}
             Status -<Label color="blue">Active</Label>
           </p>
         </ModalBody>

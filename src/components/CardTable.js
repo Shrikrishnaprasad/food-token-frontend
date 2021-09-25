@@ -4,10 +4,30 @@ import CardBody from "@material-tailwind/react/CardBody";
 import Image from "@material-tailwind/react/Image";
 import Label from "@material-tailwind/react/Label";
 import BasicSelect from "./BasicSelect";
+import { useEffect, useState } from "react";
+import { useGlobalContext } from "context";
 
 export default function CardTable() {
-  const Team1 =
-    "https://images.unsplash.com/photo-1475090169767-40ed8d18f67d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1032&q=80";
+  const { URL, user } = useGlobalContext();
+  const [filterStatus, setFilterStatus] = useState("");
+  const [tokens, setTokens] = useState([]);
+  let headersList = {
+    "Content-Type": "application/json",
+  };
+  useEffect(() => {
+    fetch(`${URL}/token/getByUserId/${user.id}`, {
+      method: "GET",
+      headers: headersList,
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        setTokens(data);
+      })
+      .catch((err) => console.log(err));
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <Card>
@@ -15,7 +35,10 @@ export default function CardTable() {
         <h2 className="text-white text-2xl">Track the token</h2>
       </CardHeader>
       <br />
-      <BasicSelect />
+      <BasicSelect
+        filterStatus={filterStatus}
+        setFilterStatus={setFilterStatus}
+      />
       <CardBody>
         <div className="overflow-x-auto">
           <table className="items-center w-full bg-transparent border-collapse">
@@ -39,69 +62,63 @@ export default function CardTable() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                  jlhvwuhlfeuhlwhl
-                </th>
-                <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                  Argon Design System
-                </th>
-                <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                  00:15 min
-                </th>
-                <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                  <Label color="green">Completed</Label>
-                </th>
-                <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                  <div className="flex">
-                    <div className="w-14 h-14">
-                      <Image src={Team1} alt="..." />
+              {tokens.length === 0 && (
+                <tr>
+                  <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
+                    Loading...
+                  </th>
+                  <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
+                    Loading...
+                  </th>
+                  <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
+                    00:00 min
+                  </th>
+                  <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
+                    <Label color="gray">Loading...</Label>
+                  </th>
+                  <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
+                    <div className="flex">
+                      <div className="w-14 h-14">Loading...</div>
                     </div>
-                  </div>
-                </th>
-              </tr>
-              <tr>
-                <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                  jlhvwuhlfeuhlwhl
-                </th>
-                <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                  Argon Design System
-                </th>
-                <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                  00:15 min
-                </th>
-                <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                  <Label color="red">Pending</Label>
-                </th>
-                <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                  <div className="flex">
-                    <div className="w-14 h-14">
-                      <Image src={Team1} alt="..." />
-                    </div>
-                  </div>
-                </th>
-              </tr>
-              <tr>
-                <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                  jlhvwuhlfeuhlwhl
-                </th>
-                <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                  Argon Design System
-                </th>
-                <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                  00:15 min
-                </th>
-                <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                  <Label color="blue">Active</Label>
-                </th>
-                <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
-                  <div className="flex">
-                    <div className="w-14 h-14">
-                      <Image src={Team1} alt="..." />
-                    </div>
-                  </div>
-                </th>
-              </tr>
+                  </th>
+                </tr>
+              )}
+
+              {tokens
+                .filter((data) =>
+                  filterStatus ? data.status === filterStatus : data
+                )
+                .map((token, index) => (
+                  <tr>
+                    <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
+                      {token.token}
+                    </th>
+                    <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
+                      {token.foodName}
+                    </th>
+                    <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
+                      {token.minutes} min
+                    </th>
+                    <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
+                      {token.status === "Active" && (
+                        <Label color="blue">{token.status}</Label>
+                      )}
+                      {token.status === "Completed" && (
+                        <Label color="green">{token.status}</Label>
+                      )}
+                      {token.status === "Pending" && (
+                        <Label color="red">{token.status}</Label>
+                      )}
+                    </th>
+                    <th className="border-b border-gray-200 align-middle font-light text-sm whitespace-nowrap px-2 py-4 text-left">
+                      <div className="flex">
+                        <div className="w-14 h-14">
+                          <Image src={token.imgUrl} alt="..." />
+                        </div>
+                      </div>
+                    </th>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

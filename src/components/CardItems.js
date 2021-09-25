@@ -8,34 +8,43 @@ import Paragraph from "@material-tailwind/react/Paragraph";
 import Label from "@material-tailwind/react/Label";
 import ModalPopUp from "./ModalPopUp";
 import { useGlobalContext } from "context";
+import Skeleton from "@mui/material/Skeleton";
 
-export default function CardItems() {
+export default function CardItems({ food }) {
   const { user } = useGlobalContext();
-
   return (
     <div className="px-6 mb-12">
       <Card>
         <CardImage
-          src="https://images.unsplash.com/photo-1493770348161-369560ae357d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1170&q=80"
+          src={
+            food.imgUrl || (
+              <Skeleton
+                sx={{ margin: 4 }}
+                variant="rectangular"
+                width={250}
+                height={250}
+              />
+            )
+          }
           alt="Card Image"
         />
 
         <CardBody>
-          <H6 color="gray">Card Title</H6>
-          <Paragraph color="gray">
-            Don't be scared of the truth because we need to restart the human...
-          </Paragraph>
+          <H6 color="gray">{food.foodName}</H6>
+          <Paragraph color="gray">{food.desc}</Paragraph>
         </CardBody>
 
         <CardFooter>
-          <div class="space-x-4 flex">
+          <div className="space-x-4 flex">
             <Label color="green">
-              <span className="text-lg">₹. 25 </span>
+              <span className="text-lg">₹. {food.price} </span>
             </Label>
             <Label color="orange">
-              <span className="text-lg">00:15 </span> -min
+              <span className="text-lg">{food.minutes} </span> -min
             </Label>
-            {!user.isChef && <ModalPopUp amount={50000} />}
+            {!user.isChef && (
+              <ModalPopUp amount={Number(food.price)} food={food} />
+            )}
           </div>
         </CardFooter>
       </Card>

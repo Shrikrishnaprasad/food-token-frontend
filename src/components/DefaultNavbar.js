@@ -56,10 +56,10 @@ export default function DefaultNavbar() {
                     ripple="light"
                   >
                     <Link to="/viewFood">
-                      <DropdownItem color="purple">View</DropdownItem>
+                      <DropdownItem color="purple">View Foods</DropdownItem>
                     </Link>
                     <Link to="/status">
-                      <DropdownItem color="purple">Status</DropdownItem>
+                      <DropdownItem color="purple">Update Status</DropdownItem>
                     </Link>
                     <Link to="/addFood">
                       <DropdownItem color="purple">Add Food</DropdownItem>
@@ -81,7 +81,7 @@ export default function DefaultNavbar() {
                     ripple="light"
                   >
                     <Link to="/createToken">
-                      <DropdownItem color="lightBlue">Generate</DropdownItem>
+                      <DropdownItem color="lightBlue">Book</DropdownItem>
                     </Link>
                     <Link to="/trackToken">
                       <DropdownItem color="lightBlue">Track</DropdownItem>

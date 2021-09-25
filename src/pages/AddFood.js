@@ -10,9 +10,12 @@ import Page from "components/login/Page";
 import Input from "@material-tailwind/react/Input";
 import { useState } from "react";
 import { useHistory } from "react-router";
+import { useGlobalContext } from "context";
 
 export default function AddFood() {
   const history = useHistory();
+  const { URL } = useGlobalContext();
+
   const initialState = {
     foodName: "",
     desc: "",
@@ -32,9 +35,38 @@ export default function AddFood() {
       foodDetails.price &&
       foodDetails.minutes
     ) {
-      alert("Food Added successfully");
-      setFoodDetails(initialState);
-      history.push("/viewFood");
+      const foodName = foodDetails.foodName;
+      const desc = foodDetails.desc;
+      const imgUrl = foodDetails.imgUrl;
+      const price = foodDetails.price;
+      const minutes = foodDetails.minutes;
+      let headersList = {
+        "Content-Type": "application/json",
+      };
+      fetch(`${URL}/food/addFood`, {
+        method: "POST",
+        body: JSON.stringify({
+          foodName,
+          desc,
+          imgUrl,
+          price,
+          minutes,
+        }),
+        headers: headersList,
+      })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          if (data.foodName) {
+            alert(data.foodName + " is Added successfully");
+            setFoodDetails(initialState);
+            history.push("/viewFood");
+          } else {
+            alert(data);
+          }
+        })
+        .catch((err) => console.log(err));
     } else {
       alert("Please Enter All fields");
     }

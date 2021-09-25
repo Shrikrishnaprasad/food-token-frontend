@@ -7,7 +7,7 @@ import Button from "@material-tailwind/react/Button";
 import InputIcon from "@material-tailwind/react/InputIcon";
 import SearchIcon from "@mui/icons-material/Search";
 
-export default function ModalSearch() {
+export default function ModalSearch({ search, setSearch }) {
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -19,11 +19,16 @@ export default function ModalSearch() {
         type="button"
         ripple="light"
       >
-        Search... <SearchIcon className=" ml-10" />
+        {search || "Search..."} <SearchIcon className=" ml-10" />
       </Button>
 
       <Modal size="lg" active={showModal} toggler={() => setShowModal(false)}>
-        <ModalHeader toggler={() => setShowModal(false)}>
+        <ModalHeader
+          toggler={() => {
+            setShowModal(false);
+            setSearch("");
+          }}
+        >
           Search the Food Name here ...
         </ModalHeader>
         <ModalBody>
@@ -35,6 +40,9 @@ export default function ModalSearch() {
               placeholder="Food name..."
               iconFamily="material-icons"
               iconName="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              autofocus
             />
           </p>
         </ModalBody>
@@ -42,7 +50,10 @@ export default function ModalSearch() {
           <Button
             color="red"
             buttonType="link"
-            onClick={(e) => setShowModal(false)}
+            onClick={(e) => {
+              setShowModal(false);
+              setSearch("");
+            }}
             ripple="dark"
           >
             Close

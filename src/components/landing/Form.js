@@ -5,8 +5,11 @@ import Textarea from "@material-tailwind/react/Textarea";
 import Button from "@material-tailwind/react/Button";
 import { useState } from "react";
 import { useHistory } from "react-router";
+import { useGlobalContext } from "context";
 
 export default function Form() {
+  const { URL } = useGlobalContext();
+
   const history = useHistory();
   const initialState = {
     name: "",
@@ -17,9 +20,26 @@ export default function Form() {
   const send = (e) => {
     e.preventDefault();
     if (sendMail.name && sendMail.email && sendMail.msg) {
-      alert("Mailed successfully");
-      setSendMail(initialState);
-      history.push("/");
+      const name = sendMail.name;
+      const email = sendMail.email;
+      const msg = sendMail.msg;
+      let headersList = {
+        "Content-Type": "application/json",
+      };
+      fetch(`${URL}/mail/addMail`, {
+        method: "POST",
+        body: JSON.stringify({ name, email, msg }),
+        headers: headersList,
+      })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          alert("Mailed successfully");
+          setSendMail(initialState);
+          history.push("/");
+        })
+        .catch((err) => console.log(err));
     } else {
       alert("Please Enter All fields");
     }

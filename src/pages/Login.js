@@ -20,12 +20,11 @@ import { useGlobalContext } from "context";
 
 export default function Login() {
   const history = useHistory();
-  //const { setUser } = useGlobalContext();
+  const { URL, user, setUser } = useGlobalContext();
   const [type, setType] = useState("User");
   const initialState = {
     email: "",
     password: "",
-    type: type,
   };
   const [loginData, setLoginData] = useState(initialState);
   const handleChange = (event) => {
@@ -34,10 +33,39 @@ export default function Login() {
   const checkLogin = (e) => {
     e.preventDefault();
     if (loginData.email && loginData.password) {
-      alert("Login Successfull");
-      setLoginData(initialState);
-      setType("User");
-      history.push("/");
+      const email = loginData.email;
+      const password = loginData.password;
+      const isChef = type === "Chef" ? true : false;
+      let headersList = {
+        "Content-Type": "application/json",
+      };
+      fetch(`${URL}/user/login`, {
+        method: "POST",
+        body: JSON.stringify({ email, password, isChef }),
+        headers: headersList,
+      })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          if (data.username) {
+            alert("Hi " + data.username + " !! You are logged in ");
+            setLoginData(initialState);
+            setUser({
+              ...user,
+              id: data._id,
+              username: data.username,
+              email: data.email,
+              mobile: data.mobile,
+              isChef: data.isChef,
+            });
+            history.push("/");
+            setType("User");
+          } else {
+            alert(data);
+          }
+        })
+        .catch((err) => console.log(err));
     } else {
       alert("Please Enter All fields");
     }
@@ -104,6 +132,12 @@ export default function Login() {
                   </FormControl>
                 </Box>
               </div>
+              <p className="mt-2 text-gray-400">
+                User - sgkrishna619@gmail.com , pass : 123
+              </p>
+              <p className="mt-2 text-gray-400">
+                For Chef - chef@gmail.com , pass : 123
+              </p>
             </CardBody>
             <CardFooter>
               <div className="flex justify-center bg-bb">

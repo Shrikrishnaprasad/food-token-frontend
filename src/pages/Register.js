@@ -9,10 +9,11 @@ import Page from "components/login/Page";
 import Input from "@material-tailwind/react/Input";
 import { useState } from "react";
 import { useHistory } from "react-router";
+import { useGlobalContext } from "context";
 
 export default function Register() {
   const history = useHistory();
-
+const { URL } = useGlobalContext();
   const initialState = {
     username: "",
     mobile: "",
@@ -39,9 +40,44 @@ export default function Register() {
       userDetails.city &&
       userDetails.postal
     ) {
-      alert("Registration done successfully!");
-      setUserDetails(initialState);
-      history.push("/login");
+      const email = userDetails.email;
+      const password = userDetails.password;
+      const username = userDetails.username;
+      const mobile = userDetails.mobile;
+      const firstName = userDetails.firstName;
+      const address = userDetails.address;
+      const city = userDetails.city;
+      const postal = userDetails.postal;
+      let headersList = {
+        "Content-Type": "application/json",
+      };
+      fetch(`${URL}/user/register`, {
+        method: "POST",
+        body: JSON.stringify({
+          username,
+          mobile,
+          firstName,
+          email,
+          password,
+          address,
+          city,
+          postal,
+        }),
+        headers: headersList,
+      })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          if (data.email) {
+            alert("Registration done successfully!");
+            setUserDetails(initialState);
+            history.push("/login");
+          } else {
+            alert(data.keyValue.email + " this Email is already exists!");
+          }
+        })
+        .catch((err) => console.log(err));
     } else {
       alert("Please Enter required fields");
     }

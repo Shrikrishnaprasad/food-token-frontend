@@ -1,15 +1,13 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
-export default function BasicSelect() {
-  const [status, setStatus] = React.useState("");
-
+export default function BasicSelect({ filterStatus, setFilterStatus }) {
   const handleChange = (event) => {
-    setStatus(event.target.value);
+    setFilterStatus("");
+    setFilterStatus(event.target.value);
   };
 
   return (
@@ -19,11 +17,12 @@ export default function BasicSelect() {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={status}
+          value={filterStatus}
           label="Status"
           onChange={handleChange}
           size="small"
         >
+          <MenuItem value="">All</MenuItem>
           <MenuItem value="Pending">Pending</MenuItem>
           <MenuItem value="Active">Active</MenuItem>
           <MenuItem value="Completed">Completed</MenuItem>
