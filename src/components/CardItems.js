@@ -13,7 +13,7 @@ import Skeleton from "@mui/material/Skeleton";
 export default function CardItems({ food }) {
   const { user } = useGlobalContext();
   return (
-    <div className="px-6 mb-12">
+    <div className="px-4 mb-12">
       <Card>
         <CardImage
           src={
@@ -35,7 +35,7 @@ export default function CardItems({ food }) {
         </CardBody>
 
         <CardFooter>
-          <div className="space-x-4 flex">
+          <div className="space-x-2 flex">
             <Label color="green">
               <span className="text-lg">₹. {food.price} </span>
             </Label>
